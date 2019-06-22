@@ -1,6 +1,6 @@
 <div>
     <div>
-        <p>Burgers to be Eaten:</p>
+        <h2>Burgers to be Eaten:</h2>
 
         <ul id="undevoured">   
             {{#each burgers}}
@@ -49,7 +49,7 @@
                 $.post("/api/burger", burger, function(response){
                     var li = $("<li>");
                     var p = $("<p>").text(burger.burger_name);
-                    var button = $("<button>").text("Devour!").attr("data-id",response.insertId).attr("data-status",burger.devoured).addClass("btn btn-primary update-status");
+                    var button = $("<button>").text("Devour!").attr("data-id",response.insertId).attr("data-status",burger.devoured).addClass("btn btn-primary rounded update-status");
                     $(li).append(p,button);
                     $("#undevoured").append(li);
                 })
