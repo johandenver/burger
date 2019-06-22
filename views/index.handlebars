@@ -1,0 +1,86 @@
+<div>
+    <div>
+        <p>Burgers to be Eaten:</p>
+
+        <ul id="undevoured">   
+            {{#each burgers}}
+                {{#unless devoured}}
+                <li>
+                   <p>{{burger_name}}</p> 
+                   <button data-id={{id}} data-status={{devoured}} class="btn btn-primary update-status">Devour!</button>
+                </li>
+                {{/unless}}
+            {{/each}}
+        </ul>
+    </div>
+<hr/>
+    <div>
+        <h2>Burgers already eaten:</h2>
+        <ul id="devoured">
+            {{#each burgers}}
+                {{#if devoured}}
+                 <li>
+                   <p>{{burger_name}}</p> 
+                </li>
+                {{/if}}
+            {{/each}}
+        </ul>
+    </div>
+    <div>
+        <form id="burger-form">
+            <label for="name">Burger Name:</label>
+            <input type="text" required name="burger_name" id="name"/>
+            <button id="submit-burger">Create</button>
+        </form>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $("#submit-burger").click(function(e){
+            var form = $("#burger-form")[0];
+            form.reportValidity()
+            if(form.checkValidity()){
+                e.preventDefault();
+                var burger = {
+                    burger_name: $("#name").val().trim(),
+                    devoured: 0
+                }
+                $("#name").val("")
+                $.post("/api/burger", burger, function(response){
+                    var li = $("<li>");
+                    var p = $("<p>").text(burger.burger_name);
+                    var button = $("<button>").text("Devour!").attr("data-id",response.insertId).attr("data-status",burger.devoured).addClass("btn btn-primary update-status");
+                    $(li).append(p,button);
+                    $("#undevoured").append(li);
+                })
+            }
+        })
+
+        $(document).on("click", ".update-status", function(){
+            var burger = {
+                devoured: (parseInt($(this).data("status")) === 0)? 1 : 0
+            }
+
+            var id = $(this).data("id")
+            var self = $(this)
+            $.ajax("/api/burger/" + id, {
+                type: "PUT",
+                data: burger
+            }).then(function(response){
+                if(response){
+                    var parent = self.parent("li")
+                    var sibling = self.prev("p")
+                    sibling = sibling.text()
+                    parent.remove()
+                    var li = $("<li>");
+                    var p = $("<p>").text(sibling);
+                    $(li).append(p)
+                    $("#devoured").append(li)
+                } else {
+                    alert("something went wrong, please refresh and try again.")
+
+                }
+            })
+        })
+    });
+</script>

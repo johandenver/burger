@@ -1,2 +1,3 @@
 INSERT INTO burgers (burger_name, devoured)
-VALUES ('Aussie Burger', true), ('Big Mac', true), ("Double Double", true);
+VALUES ('Aussie Burger', false), ('Big Mac', false), ("Double Double", false);
+
